@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishMapper">
+
+    <insert id="addDish" useGeneratedKeys="true" keyProperty="id">
+        insert into sky_take_out.dish (name, category_id, price, status, image, description, create_time, update_time,
+                                       create_user, update_user)
+        values (#{name}, #{categoryId}, #{price}, #{status}, #{image}, #{description}, #{createTime}, #{updateTime},
+                #{createUser}, #{updateUser})
+    </insert>
+
+    <update id="updateDish">
+        update sky_take_out.dish
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="controlAll">
+        update sky_take_out.dish
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <delete id="deleteAll">
+        delete from sky_take_out.dish where id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from sky_take_out.dish
+    </select>
+    <select id="findByPage" resultType="com.sky.entity.Dish">
+        select * from sky_take_out.dish
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat(#{name},'%')
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        limit #{page},#{pageSize}
+    </select>
+    <select id="findById" resultType="com.sky.entity.Dish">
+        select * from sky_take_out.dish where id= #{id}
+    </select>
+    <select id="findList" resultType="com.sky.entity.Dish">
+        select * from sky_take_out.dish
+        <where>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+    <select id="getOverViewDish" resultType="java.lang.Integer">
+        select count(*) from sky_take_out.dish where status = #{status}
+    </select>
+</mapper>

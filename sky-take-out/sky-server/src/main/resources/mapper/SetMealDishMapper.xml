@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.SetMealDishMapper">
+
+    <insert id="addDish">
+        insert into sky_take_out.setmeal_dish (setmeal_id, dish_id, name, price, copies)
+        values
+        <foreach collection="setmealDishes" item="dish" separator=",">
+            (#{dish.setmealId}, #{dish.dishId}, #{dish.name}, #{dish.price}, #{dish.copies})
+        </foreach>
+    </insert>
+    <delete id="deleteById">
+        delete
+        from sky_take_out.setmeal_dish
+        where setmeal_id = #{setmealId}
+    </delete>
+    <select id="getById" resultType="com.sky.entity.SetmealDish">
+        select * from sky_take_out.setmeal_dish where setmeal_id = #{setmealId}
+    </select>
+</mapper>
