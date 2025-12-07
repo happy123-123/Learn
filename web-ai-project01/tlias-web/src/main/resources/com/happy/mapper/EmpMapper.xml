@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.happy.mapper.EmpMapper">
+    <insert id="insertEmp">
+        insert into emp(username,password,name,gender,phone,job,salary,image,entry_date,dept_id,create_time,update_time)
+        values(#{username},#{password},#{name},#{gender},#{phone},#{job},#{salary},#{image},#{entryDate},#{deptId},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="updateEmp">
+        update emp
+        <set>
+            <if test="username != null and username !='' ">username = #{username},</if>
+            <if test="password != null and password !=''">password = #{password},</if>
+            <if test="name != null and name !=''">name = #{name},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="phone != null and phone !=''">phone = #{phone},</if>
+            <if test="job != null">job = #{job},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="image != null and image !=''">image = #{image},</if>
+            <if test="entryDate != null">entry_date = #{entryDate},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="updateTime != null">update_time = #{updateTime}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <delete id="deleteEmp">
+        delete dept from dept left join emp on dept.id=emp.dept_id where emp.dept_id is null and dept.id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findALL" resultType="com.happy.pojo.Emp">
+        select e.*,d.name deptName from emp e left join dept d on e.dept_id=d.id
+        <where>
+            <if test="name != null and name !=''">
+                e.name like concat(#{name},'%')
+            </if>
+            <if test="gender != null">
+                e.gender=#{gender}
+            </if>
+            <if test="begin != null and end !=null">
+                e.entry_date between #{begin} and #{end}
+            </if>
+        </where>
+        order by e.update_time desc limit #{page},#{pageSize}
+    </select>
+    <select id="findBackEmp" resultType="com.happy.pojo.Emp">
+        select * from emp where id=#{id}
+    </select>
+    <select id="findGender" resultType="com.happy.pojo.Gender">
+        select (case gender when 1 then '男' when 2 then '女' end) name,count(gender) value from emp group by gender
+    </select>
+<!--    <select id="findJobOption" resultType="com.happy.pojo.JobOption">-->
+<!--        select (case job when 1 then '班主任'-->
+<!--                         when 2 then '讲师'-->
+<!--                         when 3 then '学工主管'-->
+<!--                         when 4 then '教研主管'-->
+<!--                         when 5 then '咨询师' else '其他' end) pos,-->
+<!--               count(*) num from emp group by job order by num-->
+<!--    </select>-->
+    <select id="findJobOption" resultType="java.util.Map">
+            select (case job when 1 then '班主任'
+                             when 2 then '讲师'
+                             when 3 then '学工主管'
+                             when 4 then '教研主管'
+                             when 5 then '咨询师' else '其他' end) pos,
+                   count(*) num from emp group by job order by num
+    </select>
+    <select id="findEmpList" resultType="com.happy.pojo.Emp">
+        select * from emp
+    </select>
+    <select id="loginEmp" resultType="com.happy.pojo.LoginInfo">
+        select * from emp where username=#{username} and password=#{password}
+    </select>
+
+</mapper>
